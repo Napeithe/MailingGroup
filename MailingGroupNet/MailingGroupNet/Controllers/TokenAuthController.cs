@@ -82,7 +82,7 @@ namespace MailingGroupNet.Controllers
             // Specifically add the jti (random nonce), iat (issued timestamp), and sub (subject/user) claims.
             claimsList.AddRange(new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, nameIdClaim?.Value),
+                new Claim(JwtRegisteredClaimNames.Sub, nameIdClaim.Value),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.Now.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
             });

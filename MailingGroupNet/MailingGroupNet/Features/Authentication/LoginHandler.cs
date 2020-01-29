@@ -17,11 +17,11 @@ namespace MailingGroupNet.Features.Authentication
     }
 
 
-    public class Login : IRequestHandler<AuthenticationModel, ApiResult<List<Claim>>>
+    public class LoginHandler : IRequestHandler<AuthenticationModel, ApiResult<List<Claim>>>
     {
         private readonly UserManager<IdentityUser> _userManager;
 
-        public Login(UserManager<IdentityUser> userManager)
+        public LoginHandler(UserManager<IdentityUser> userManager)
         {
             _userManager = userManager;
         }
@@ -40,7 +40,7 @@ namespace MailingGroupNet.Features.Authentication
             if (!isValidPassword)
             {
                 return ApiResult<List<Claim>>.Failed("Username or password is invalid");
-            };
+            }
 
             IList<Claim> claims = await _userManager.GetClaimsAsync(user);
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.UserName));

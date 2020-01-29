@@ -8,3 +8,9 @@ MailingGroupNet/MailingGroupNet/bin/
 MailingGroupNet/Model/bin/
 
 MailingGroupNet/Model/obj/
+
+*.ncrunchsolution
+
+MailingGroupNet/MailingGroupNetTest/bin/
+
+MailingGroupNet/MailingGroupNetTest/obj/
