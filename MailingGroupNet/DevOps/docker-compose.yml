@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  mailinggroupdb:
+    image: postgres:10.4
+    networks:
+      - default
+  dbadmin:
+    image: dpage/pgadmin4:latest
+    networks: 
+      - default
+networks:
+  default:
+    driver: bridge

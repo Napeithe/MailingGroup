@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  mailinggroupdb:
+    ports: 
+      - "5432:5432" 
+    environment:
+      - POSTGRES_PASSWORD=asdQAdAadf23
+      - POSTGRES_USER=mailinggroup
+  dbadmin:
+    ports: 
+      - "5050:80" 
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin.org
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGDATA=/tmp   
