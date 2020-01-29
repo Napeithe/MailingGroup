@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Text;
+using MailingGroupNet.Authentication;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -53,7 +54,7 @@ namespace MailingGroupNet
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 6;
+                options.Password.RequiredLength = 3;
                 options.Password.RequiredUniqueChars = 1;
 
                 // Lockout settings.
@@ -66,25 +67,8 @@ namespace MailingGroupNet
                     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = true;
             });
-            var key = Encoding.ASCII.GetBytes(Configuration["App:Key"]);
-            services.AddAuthentication(x =>
-                {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(x =>
-                {
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
-                });
-
+           
+            AuthConfigure.Configure(services, Configuration);
 
             services.AddAuthorization();
 
@@ -102,6 +86,8 @@ namespace MailingGroupNet
                     Type = SecuritySchemeType.ApiKey
                 });
             });
+
+            services.RegisterTokenAuth();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -123,6 +109,8 @@ namespace MailingGroupNet
             {
                 endpoints.MapControllers();
             });
+
+            app.UseTokenAuthConfiguration(Configuration);
 
             app.UseSwagger();
             app.UseSwaggerUI(options =>
