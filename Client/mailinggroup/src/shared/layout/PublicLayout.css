@@ -1,0 +1,5 @@
+.public-container {
+  background-image: url("library.jpg");
+  background-size: cover;
+  height: 100vh;
+}
