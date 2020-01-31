@@ -1,5 +1,5 @@
-import { Router, Route, Switch, Redirect } from "react-router-dom";
-import LoginPage from './pages/LoginPage';
+import { Router, Route, Switch, Redirect } from 'react-router-dom';
+import LoginPage from './pages/LoginPage'
 
 <Router>
   <Switch>
