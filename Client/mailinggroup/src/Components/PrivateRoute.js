@@ -5,18 +5,18 @@ import { getToken } from '../Services/accountService'
 import PropTypes from 'prop-types'
 import routes from '../Routing/routes'
 
-export const PrivateRoute = ({ component: Component, ...rest }) => {
+export const PrivateRoute = ({ render: Render, ...rest }) => {
   PrivateRoute.propTypes = {
-    component: Component,
-    location: PropTypes.string
+    render: PropTypes.func,
+    location: PropTypes.object,
+    children: PropTypes.object
   }
 
   return <Route {...rest} render={props => {
     const currentUser = getToken()
-    debugger
     if (!currentUser) {
       return <Redirect to={{ pathname: routes.login, state: { from: props.location } }} />
     }
-    return <Component {...props} />
+    return <Render {...props}></Render>
   }} />
 }

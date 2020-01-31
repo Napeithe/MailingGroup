@@ -1,22 +1,57 @@
 import React from 'react'
-import { Row, Layout } from 'antd'
+import { Row, Layout, Dropdown, Menu, Icon, Button } from 'antd'
+import { logout } from '../../Services/accountService'
+import PropTypes from 'prop-types'
+import routes from '../../Routing/routes'
 
 const { Header, Content } = Layout
 
 const AuthLayout = (props) => {
+  AuthLayout.propTypes = {
+    history: PropTypes.object
+  }
+
+  const onLogout = () => {
+    logout()
+
+    props.history.push(routes.login)
+  }
+
   return (
-    <div className="auth-container">
-      <div style={{ maxWidth: 1200, margin: 'auto' }}>
+    <Layout>
+      <Header
+        style={{
+          zIndex: 1,
+          width: '100%',
+          backgroundColor: '#672A2F'
+        }}
+      >
         <Row
           type="flex"
-          justify="center"
           align="middle"
-          style={{ paddingTop: 240 }}
+          justify="end"
+          style={{ height: '100%' }}
         >
-          {props.children}
+          <Dropdown
+            overlay={
+              <Menu>
+                <Menu.Item key="1" onClick={onLogout}>
+                  <Icon type="logout" />
+                    Logout
+                </Menu.Item>
+              </Menu>
+            }
+            trigger={['click']}
+          >
+            <Button ghost className="primary-btn">
+                User@gmail.com <Icon type="down" />
+            </Button>
+          </Dropdown>
         </Row>
-      </div>
-    </div>
+      </Header>
+      <Content style={{ padding: '0 50px', marginTop: 64, height: '100vh' }}>
+        <div style={{ padding: 24, minHeight: 280 }}>    {props.children}</div> </Content>
+    </Layout>
   )
 }
 

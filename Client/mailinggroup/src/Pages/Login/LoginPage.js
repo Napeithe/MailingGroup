@@ -9,7 +9,7 @@ import PropTypes from 'prop-types'
 const LoginPage = props => {
   LoginPage.propTypes = {
     form: formShape,
-    history: PropTypes.instanceOf(History)
+    history: PropTypes.object
   }
   const { getFieldDecorator } = props.form
 

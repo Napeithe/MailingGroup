@@ -23,10 +23,19 @@ export const loginService = (loginForm) => {
 }
 
 export const getToken = () => {
-  const user = localStorage.getItem(itemKey)
+  const userJson = localStorage.getItem(itemKey)
+  if (!userJson) {
+    return null
+  }
+  const user = JSON.parse(userJson)
+
+  return user.accessToken
+}
+
+export const logout = () => {
+  const user = localStorage.removeItem(itemKey)
   if (!user) {
     return null
   }
-
   return user.accessToken
 }

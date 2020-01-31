@@ -1,8 +1,6 @@
 import React from 'react'
-import { Row, Layout } from 'antd'
+import { Row } from 'antd'
 import style from './PublicLayout.scss'
-
-const { Header, Content } = Layout
 
 const PublicLayout = (props) => {
   return (
