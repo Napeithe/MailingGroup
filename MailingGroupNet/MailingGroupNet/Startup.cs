@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using MailingGroupNet.Authentication;
@@ -19,6 +20,8 @@ namespace MailingGroupNet
 {
     public class Startup
     {
+        private string _defaultCorsPolicyName = "localhost";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -31,6 +34,19 @@ namespace MailingGroupNet
         {
             services.AddControllers();
 
+            services.AddCors(options => options.AddPolicy(
+                _defaultCorsPolicyName,
+                builder => builder
+                    .WithOrigins(
+                        // App:CorsOrigins in appsettings.json can contain more than one address separated by comma.
+                        Configuration["App:CorsOrigins"]
+                            .Split(",", StringSplitOptions.RemoveEmptyEntries)
+                            .ToArray()
+                    )
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+            ));
 
             services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
 
@@ -67,7 +83,7 @@ namespace MailingGroupNet
                     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = true;
             });
-           
+
             AuthConfigure.Configure(services, Configuration);
 
             services.AddAuthorization();
@@ -99,13 +115,11 @@ namespace MailingGroupNet
             }
 
             app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
+            app.UseCors(_defaultCorsPolicyName); 
+            app.UseRouting()
+                .UseAuthentication()
+                .UseAuthorization()
+                .UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
