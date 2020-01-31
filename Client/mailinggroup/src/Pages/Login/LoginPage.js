@@ -1,14 +1,50 @@
-import React from 'react'
-import { Card, Form, Input, Icon, Button } from 'antd'
+import React, { useState } from 'react'
+import { Card, Form, Input, Icon, Button, Typography } from 'antd'
 import { formShape } from 'rc-form'
 import style from './LoginPage.scss'
 import routes from '../../Routing/routes'
+import { loginService } from '../../Services/accountService'
+import PropTypes from 'prop-types'
 
 const LoginPage = props => {
   LoginPage.propTypes = {
-    form: formShape
+    form: formShape,
+    history: PropTypes.instanceOf(History)
   }
   const { getFieldDecorator } = props.form
+
+  const [loginErrorMessage, setLoginErrorMessage] = useState('testmessage')
+  const [showErrorMessage, setShowErrorMessage] = useState(false)
+
+  const ErrorMessageBlock = () => {
+    const { Text } = Typography
+    const block = (
+      <div className='error-message-block'>
+        <Text type='danger'>{loginErrorMessage}</Text>
+      </div>
+    )
+    if (showErrorMessage) {
+      return block
+    }
+    return null
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        loginService(values)
+          .then(() => {
+            props.history.push(routes.home)
+          })
+          .catch(err => {
+            setShowErrorMessage(true)
+            setLoginErrorMessage(err.message)
+          })
+      }
+    })
+  }
+
   return (
     <>
       <Card
@@ -23,7 +59,7 @@ const LoginPage = props => {
         <Form
           hideRequiredMark
           colon={false}
-          onSubmit={() => {}}
+          onSubmit={handleSubmit}
           layout="vertical"
         >
           <Form.Item>
@@ -53,6 +89,7 @@ const LoginPage = props => {
               />
             )}
           </Form.Item>
+          <ErrorMessageBlock />
           <Button
             htmlType="submit"
             className="login-form-button"

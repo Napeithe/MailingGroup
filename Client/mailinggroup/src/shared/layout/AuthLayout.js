@@ -1,12 +1,11 @@
 import React from 'react'
 import { Row, Layout } from 'antd'
-import style from './PublicLayout.scss'
 
 const { Header, Content } = Layout
 
-const PublicLayout = (props) => {
+const AuthLayout = (props) => {
   return (
-    <div className="public-container">
+    <div className="auth-container">
       <div style={{ maxWidth: 1200, margin: 'auto' }}>
         <Row
           type="flex"
@@ -21,4 +20,4 @@ const PublicLayout = (props) => {
   )
 }
 
-export default PublicLayout
+export default AuthLayout
