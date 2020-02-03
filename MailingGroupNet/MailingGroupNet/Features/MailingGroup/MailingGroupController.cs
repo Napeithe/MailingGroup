@@ -73,12 +73,12 @@ namespace MailingGroupNet.Features.MailingGroup
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResult>> Create([FromBody]Create.Command cmd, CancellationToken token)
+        public async Task<ActionResult<ApiResult<MailingGroupDto>>> Create([FromBody]Create.Command cmd, CancellationToken token)
         {
 
             cmd.InjectUserId(User);
 
-            var result = await _mediator.Send(cmd, token);
+            ApiResult<MailingGroupDto> result = await _mediator.Send(cmd, token);
 
             if (!result.IsSuccess)
             {
@@ -89,12 +89,12 @@ namespace MailingGroupNet.Features.MailingGroup
         }
 
         [HttpPut]
-        public async Task<ActionResult<ApiResult>> Update([FromBody]Update.Command updateCommand, CancellationToken token)
+        public async Task<ActionResult<ApiResult<MailingGroupDto>>> Update([FromBody]Update.Command updateCommand, CancellationToken token)
         {
 
             updateCommand.InjectUserId(User);
 
-            var result = await _mediator.Send(updateCommand, token);
+            ApiResult<MailingGroupDto> result = await _mediator.Send(updateCommand, token);
 
             if (!result.IsSuccess)
             {

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MailingGroupNet.Infrastructure;
@@ -12,7 +13,9 @@ namespace MailingGroupNet.Features.Emails.Delete
 {
     public class Command : IRequest<ApiResult>, IUserRequest
     {
+        [Required]
         public int GroupId { get; set; }
+        [Required]
         public int EmailId { get; set; }
         public string UserId { get; set; }
     }

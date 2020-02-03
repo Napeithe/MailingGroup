@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MailingGroupNet.Infrastructure;
@@ -12,9 +13,12 @@ namespace MailingGroupNet.Features.Emails.Update
 {
     public class Command : IRequest<ApiResult<EmailDto>>, IUserRequest
     {
+        [Required]
         public int GroupId { get; set; }
+        [Required]
         public int EmailId { get; set; }
         public string UserId { get; set; }
+        [Required]
         public string Email { get; set; }
     }
 
