@@ -18,9 +18,5 @@
     <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\MailingGroup\Delete\" />
-  </ItemGroup>
-
 
 </Project>
