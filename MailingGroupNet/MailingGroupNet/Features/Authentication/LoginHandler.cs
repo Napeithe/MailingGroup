@@ -44,7 +44,8 @@ namespace MailingGroupNet.Features.Authentication
             }
 
             IList<Claim> claims = await _userManager.GetClaimsAsync(user);
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.UserName));
+            claims.Add(new Claim(ClaimTypes.Name, user.UserName));
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
             return ApiResult<List<Claim>>.Success(claims.ToList());
         }

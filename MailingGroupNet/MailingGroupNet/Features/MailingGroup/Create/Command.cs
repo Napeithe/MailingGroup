@@ -11,8 +11,9 @@ using Model.Entity;
 
 namespace MailingGroupNet.Features.MailingGroup.Create
 {
-    public class Command : MailingGroupDto, IRequest<ApiResult<MailingGroupDto>>, IUserRequest
+    public class Command : IRequest<ApiResult<MailingGroupDto>>, IUserRequest
     {
+        public string Name { get; set; }
         public string UserId { get; set; }   
     }
 
@@ -59,8 +60,7 @@ namespace MailingGroupNet.Features.MailingGroup.Create
 
             await _context.AddAsync(newEntity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-            request.Id = newEntity.Id;
-            return ApiResult<MailingGroupDto>.Success(request);
+            return ApiResult<MailingGroupDto>.Success(new MailingGroupDto(newEntity.Id, newEntity.Name));
         }
     }
 }
