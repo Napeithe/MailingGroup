@@ -21,7 +21,6 @@
   <ItemGroup>
     <Folder Include="Features\MailingGroup\Delete\" />
     <Folder Include="Features\MailingGroup\Get\" />
-    <Folder Include="Features\MailingGroup\GetAll\" />
   </ItemGroup>
 
 

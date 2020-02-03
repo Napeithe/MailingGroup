@@ -14,6 +14,7 @@ namespace Model.Database
         }
 
         public DbSet<MailingGroup> MailingGroups { get; set; }
+        public DbSet<Email> Emails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -35,8 +36,14 @@ namespace Model.Database
             });
 
             builder.Entity<Email>(x =>
+            {
                 x.Property(p => p.Name)
-                    .IsRequired());
+                    .IsRequired();
+                x.HasOne(p => p.MailingGroup)
+                    .WithMany(p => p.Emails)
+                    .HasForeignKey(p => p.MailingGroupId)
+                    .IsRequired();
+            });
 
 
 
