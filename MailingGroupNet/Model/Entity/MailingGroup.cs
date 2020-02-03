@@ -5,6 +5,10 @@ namespace Model.Entity
 {
     public class MailingGroup : Entity
     {
+        public MailingGroup()
+        {
+            Emails = new List<Email>();
+        }
         public string Name { get; set; }
         public List<Email> Emails { get; set; }
 
