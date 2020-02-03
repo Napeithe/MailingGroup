@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Model.Database;
 using Model.Entity;
 using MailingGroupNet.Features.MailingGroup.Delete;
+using MailingGroupNetTest.Builders;
 using Model.Dto;
 using Xunit;
 
@@ -18,38 +17,20 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
         {
             //Arrange
             MailingGroupContext context = ContextBuilder.BuildClean();
-            AppUser firstUser = new AppUser()
-            {
-                UserName = "first",
-                Email = "first@email.com"
-            };
-            AppUser secondUser = new AppUser()
-            {
-                UserName = "second",
-                Email = "second@email.com"
-            };
-            context.Add(firstUser);
-            context.Add(secondUser);
 
-            List<MailingGroup> mailingGroups = new List<MailingGroup>
-            {
-                new MailingGroup()
-                {
-                    Name = "first",
-                    User = firstUser
-                },
-                new MailingGroup()
-                {
-                    Name = "second",
-                    User = secondUser
-                }
-            };
-            context.AddRange(mailingGroups);
-            context.SaveChanges();
+            MailingGroup firstMailingGroup = new GroupBuilder(context)
+                .WithName("Old group")
+                .WithUser(x => x.WithName("userName"))
+                .BuildAndSave();
+            MailingGroup secondMailingGroup = new GroupBuilder(context)
+                .WithName("Old group")
+                .WithUser(x => x.WithName("otherUser"))
+                .BuildAndSave();
+
             Command query = new Command()
             {
-                Id = 2,
-                UserId = firstUser.Id
+                Id = secondMailingGroup.Id,
+                UserId = firstMailingGroup.UserId
             };
             //Act
             ApiResult result = await new Handler(context).Handle(query, CancellationToken.None);
@@ -64,38 +45,18 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
         {
             //Arrange
             MailingGroupContext context = ContextBuilder.BuildClean();
-            AppUser firstUser = new AppUser()
-            {
-                UserName = "first",
-                Email = "first@email.com"
-            };
-            AppUser secondUser = new AppUser()
-            {
-                UserName = "second",
-                Email = "second@email.com"
-            };
-            context.Add(firstUser);
-            context.Add(secondUser);
-
-            List<MailingGroup> mailingGroups = new List<MailingGroup>
-            {
-                new MailingGroup()
-                {
-                    Name = "first",
-                    User = firstUser
-                },
-                new MailingGroup()
-                {
-                    Name = "second",
-                    User = secondUser
-                }
-            };
-            context.AddRange(mailingGroups);
-            context.SaveChanges();
+            MailingGroup firstMailingGroup = new GroupBuilder(context)
+                .WithName("Old group")
+                .WithUser(x => x.WithName("userName"))
+                .BuildAndSave();
+             new GroupBuilder(context)
+                .WithName("Old group")
+                .WithUser(x => x.WithName("otherUser"))
+                .BuildAndSave();
             Command query = new Command()
             {
                 Id = 22,
-                UserId = firstUser.Id
+                UserId = firstMailingGroup.UserId
             };
             //Act
             ApiResult result = await new Handler(context).Handle(query, CancellationToken.None);
@@ -110,25 +71,17 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
         {
             //Arrange
             MailingGroupContext context = ContextBuilder.BuildClean();
-            AppUser firstUser = new AppUser()
-            {
-                UserName = "first",
-                Email = "first@email.com"
-            };
-            context.Add(firstUser);
-
-            MailingGroup group = new MailingGroup()
-            {
-                Name = "first",
-                User = firstUser,
-            };
-            group.Emails = GenerateEmails(20, group).ToList();
-            context.Add(group);
-            context.SaveChanges();
+            MailingGroup firstMailingGroup = new GroupBuilder(context)
+                .WithName("Old group")
+                .WithUser(x => x.WithName("userName"))
+                .WithEmail("first")
+                .WithEmail("second")
+                .WithEmail("third")
+                .BuildAndSave();
             Command query = new Command()
             {
                 Id = 1,
-                UserId = firstUser.Id
+                UserId = firstMailingGroup.UserId
             };
             //Act
             ApiResult result = await new Handler(context).Handle(query, CancellationToken.None);
@@ -139,18 +92,6 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
 
             context.MailingGroups.Should().BeEmpty();
             context.Emails.Should().BeEmpty();
-        }
-
-        private IEnumerable<Email> GenerateEmails(int numberOfEmails, MailingGroup mailingGroup)
-        {
-            for (int i = 0; i < numberOfEmails; i++)
-            {
-                yield return new Email()
-                {
-                    Name = $"Email@{i}.pl",
-                    MailingGroup = mailingGroup
-                };
-            }
         }
     }
 }

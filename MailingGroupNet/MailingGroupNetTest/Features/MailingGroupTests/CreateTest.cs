@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MailingGroupNet.Features.MailingGroup.Create;
+using MailingGroupNetTest.Builders;
 using Model.Database;
 using Model.Dto;
 using Model.Entity;
@@ -37,13 +38,7 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
         {
             //Arrange
             MailingGroupContext mailingGroupContext = ContextBuilder.BuildClean();
-            AppUser user = new AppUser
-            {
-                UserName = "test",
-                Email = "user@user.pl"
-            };
-            mailingGroupContext.Add(user);
-            mailingGroupContext.SaveChanges();
+            AppUser user = new AppUserBuilder(mailingGroupContext).WithName("test").BuildAndSave();
 
             Command cmd = new Command
             {
@@ -63,24 +58,15 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
         {
             //Arrange
             MailingGroupContext mailingGroupContext = ContextBuilder.BuildClean();
-            AppUser user = new AppUser
-            {
-                UserName = "test",
-                Email = "user@user.pl"
-            };
-            mailingGroupContext.Add(user);
-            Model.Entity.MailingGroup oldGroup = new Model.Entity.MailingGroup
-            {
-                Name = "Old group",
-                User = user
-            };
-            mailingGroupContext.Add(oldGroup);
-            mailingGroupContext.SaveChanges();
+            MailingGroup mailingGroup = new GroupBuilder(mailingGroupContext)
+                .WithName("Old group")
+                .WithUser(x => x.WithName("userName"))
+                .BuildAndSave();
 
             Command cmd = new Command
             {
-                UserId = user.Id,
-                Name = oldGroup.Name
+                UserId = mailingGroup.UserId,
+                Name = mailingGroup.Name
             };
             //Act
             ApiResult<MailingGroupDto> result = await new Handler(mailingGroupContext).Handle(cmd, CancellationToken.None);
@@ -95,13 +81,7 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
         {
             //Arrange
             MailingGroupContext mailingGroupContext = ContextBuilder.BuildClean();
-            AppUser user = new AppUser
-            {
-                UserName = "test",
-                Email = "user@user.pl"
-            };
-            mailingGroupContext.Add(user);
-            mailingGroupContext.SaveChanges();
+            AppUser user = new AppUserBuilder(mailingGroupContext).WithName("test").BuildAndSave();
 
             Command cmd = new Command
             {
