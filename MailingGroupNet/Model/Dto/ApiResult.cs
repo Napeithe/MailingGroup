@@ -35,7 +35,8 @@
             return new ApiResult<T>
             {
                 Data = data,
-                IsSuccess = true
+                IsSuccess = true,
+                StatusCode = 200
             };
         }
 
