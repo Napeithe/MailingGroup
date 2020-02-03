@@ -3,6 +3,7 @@ using FluentAssertions;
 using MailingGroupNet.Features.Authentication;
 using MailingGroupNetTest.Moq;
 using Microsoft.AspNetCore.Identity;
+using Model.Entity;
 using Moq;
 using Xunit;
 
@@ -14,7 +15,7 @@ namespace MailingGroupNetTest.Features
         public async Task ExecuteShouldReturnFailurePasswordMismatch()
         {
             //Arrange
-            Mock<UserManager<IdentityUser>> userManagerMoq = UserManagerMoq.Get();
+            Mock<UserManager<AppUser>> userManagerMoq = UserManagerMoq.Get();
             RegisterModel registerModel = new RegisterModel
             {
                 Email = "dsa",
@@ -27,16 +28,16 @@ namespace MailingGroupNetTest.Features
             //Assert
             result.IsSuccess.Should().BeFalse("Passwords are invalid");
             result.Message.Should().NotBeNullOrEmpty();
-            userManagerMoq.Verify(x=>x.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()), Times.Never);
+            userManagerMoq.Verify(x=>x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
         public async Task ExecuteShouldReturnFailureUserManagerFailure()
         {
             //Arrange
-            Mock<UserManager<IdentityUser>> userManagerMoq = UserManagerMoq.Get();
+            Mock<UserManager<AppUser>> userManagerMoq = UserManagerMoq.Get();
             var message = "Username is taken";
-            userManagerMoq.Setup(x => x.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed(new[]
+            userManagerMoq.Setup(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed(new[]
             {
                 new IdentityError()
                 {
@@ -56,15 +57,15 @@ namespace MailingGroupNetTest.Features
             result.IsSuccess.Should().BeFalse("User is taken");
             result.Message.Should().NotBeNullOrEmpty().And.Be(message);
 
-            userManagerMoq.Verify(x => x.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()), Times.Once);
+            userManagerMoq.Verify(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()), Times.Once);
         }
 
         [Fact]
         public async Task ExecuteShouldReturnSuccess()
         {
             //Arrange
-            Mock<UserManager<IdentityUser>> userManagerMoq = UserManagerMoq.Get();
-            userManagerMoq.Setup(x => x.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+            Mock<UserManager<AppUser>> userManagerMoq = UserManagerMoq.Get();
+            userManagerMoq.Setup(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
             RegisterModel registerModel = new RegisterModel
             {
                 Email = "dsa",
@@ -78,7 +79,7 @@ namespace MailingGroupNetTest.Features
             result.IsSuccess.Should().BeTrue();
             result.Message.Should().BeNullOrEmpty();
 
-            userManagerMoq.Verify(x => x.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()), Times.Once);
+            userManagerMoq.Verify(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()), Times.Once);
         }
     }
 }

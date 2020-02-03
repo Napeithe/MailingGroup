@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Model.Dto;
+using Model.Entity;
 
 namespace MailingGroupNet.Features.Authentication
 {
@@ -19,27 +20,27 @@ namespace MailingGroupNet.Features.Authentication
 
     public class LoginHandler : IRequestHandler<AuthenticationModel, ApiResult<List<Claim>>>
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
 
-        public LoginHandler(UserManager<IdentityUser> userManager)
+        public LoginHandler(UserManager<AppUser> userManager)
         {
             _userManager = userManager;
         }
 
         public async Task<ApiResult<List<Claim>>> Handle(AuthenticationModel request, CancellationToken cancellationToken)
         {
-            IdentityUser user = await _userManager.Users.Where(x => x.UserName == request.UserName).FirstOrDefaultAsync(cancellationToken);
+            AppUser user = await _userManager.Users.Where(x => x.UserName == request.UserName).FirstOrDefaultAsync(cancellationToken);
 
             if (user is null)
             {
-                return ApiResult<List<Claim>>.Failed("Username or password is invalid");
+                return ApiResult<List<Claim>>.Failed("Username or password is invalid", 401);
             }
 
             var isValidPassword = await _userManager.CheckPasswordAsync(user, request.Password);
 
             if (!isValidPassword)
             {
-                return ApiResult<List<Claim>>.Failed("Username or password is invalid");
+                return ApiResult<List<Claim>>.Failed("Username or password is invalid", 401);
             }
 
             IList<Claim> claims = await _userManager.GetClaimsAsync(user);

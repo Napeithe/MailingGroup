@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Model.Entity;
 
 namespace Model.Database
 {
-    public class MailingGroupContext : IdentityDbContext
+    public class MailingGroupContext : IdentityDbContext<AppUser>
     {
 
         public MailingGroupContext(DbContextOptions<MailingGroupContext> options) :
@@ -32,10 +29,9 @@ namespace Model.Database
                     .HasForeignKey(p => p.MailingGroupId);
 
                 x.HasOne(p => p.User)
-                    .WithOne()
-                    .HasForeignKey<MailingGroup>(p => p.UserId);
-
-                x.HasIndex(p => p.Name).IsUnique();
+                    .WithMany(p=>p.MailingGroups)
+                    .HasForeignKey(p=>p.UserId)
+                    .IsRequired();
             });
 
             builder.Entity<Email>(x =>

@@ -4,20 +4,23 @@
     {
         public bool IsSuccess { get; set; }
         public string Message { get; set; }
+        public int StatusCode { get; set; }
 
-        public static ApiResult Failed(string message)
+        public static ApiResult Failed(string message, int statusCode)
         {
             return new ApiResult
             {
                 IsSuccess = false,
-                Message = message
+                Message = message,
+                StatusCode = statusCode
             };
         }
         public static ApiResult Success()
         {
             return new ApiResult
             {
-                IsSuccess = true
+                IsSuccess = true,
+                StatusCode = 200
             };
         }
 
@@ -36,13 +39,14 @@
             };
         }
 
-        public static ApiResult<T> Failed(string message)
+        public static ApiResult<T> Failed(string message, int statusCode)
         {
             return new ApiResult<T>
             {
                 Data = default,
                 Message = message,
-                IsSuccess = false
+                IsSuccess = false,
+                StatusCode = statusCode
             };
         }
     }

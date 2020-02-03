@@ -7,6 +7,7 @@ using MailingGroupNet.Features.Authentication;
 using MailingGroupNetTest.Moq;
 using Microsoft.AspNetCore.Identity;
 using MockQueryable.Moq;
+using Model.Entity;
 using Moq;
 using Xunit;
 
@@ -18,9 +19,9 @@ namespace MailingGroupNetTest.Features
         public async Task ExecuteShouldReturnFailureUserNotExist()
         {
             //Arrange
-            Mock<UserManager<IdentityUser>> userManagerMoq = UserManagerMoq.Get();
-            var identityUsers = new List<IdentityUser>().AsQueryable().BuildMock();
-            userManagerMoq.SetupGet(x => x.Users).Returns(identityUsers.Object);
+            Mock<UserManager<AppUser>> userManagerMoq = UserManagerMoq.Get();
+            var AppUsers = new List<AppUser>().AsQueryable().BuildMock();
+            userManagerMoq.SetupGet(x => x.Users).Returns(AppUsers.Object);
             AuthenticationModel registerModel = new AuthenticationModel
             {
                 UserName = "das",
@@ -31,22 +32,22 @@ namespace MailingGroupNetTest.Features
             //Assert
             result.IsSuccess.Should().BeFalse("User not exist");
             result.Message.Should().NotBeNullOrEmpty().And.Be("Username or password is invalid");
-            userManagerMoq.Verify(x=>x.CheckPasswordAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()), Times.Never);
-            userManagerMoq.Verify(x => x.GetClaimsAsync(It.IsAny<IdentityUser>()), Times.Never);
+            userManagerMoq.Verify(x=>x.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>()), Times.Never);
+            userManagerMoq.Verify(x => x.GetClaimsAsync(It.IsAny<AppUser>()), Times.Never);
         }
 
         [Fact]
         public async Task ExecuteShouldReturnFailurePasswordMismatch()
         {
             //Arrange
-            Mock<UserManager<IdentityUser>> userManagerMoq = UserManagerMoq.Get();
-            IdentityUser user = new IdentityUser("das");
-            var identityUsers = new List<IdentityUser>()
+            Mock<UserManager<AppUser>> userManagerMoq = UserManagerMoq.Get();
+            AppUser user = new AppUser("das");
+            var AppUsers = new List<AppUser>()
             {
                 user
             }.AsQueryable().BuildMock();
-            userManagerMoq.SetupGet(x => x.Users).Returns(identityUsers.Object);
-            userManagerMoq.Setup(x => x.CheckPasswordAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
+            userManagerMoq.SetupGet(x => x.Users).Returns(AppUsers.Object);
+            userManagerMoq.Setup(x => x.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
                 .ReturnsAsync(false);
             AuthenticationModel registerModel = new AuthenticationModel
             {
@@ -58,7 +59,7 @@ namespace MailingGroupNetTest.Features
             //Assert
             result.IsSuccess.Should().BeFalse("User not exist");
             result.Message.Should().NotBeNullOrEmpty().And.Be("Username or password is invalid");
-            userManagerMoq.Verify(x=>x.CheckPasswordAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()), Times.Once);
+            userManagerMoq.Verify(x=>x.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>()), Times.Once);
             userManagerMoq.Verify(x => x.GetClaimsAsync(user), Times.Never);
         }
 
@@ -66,14 +67,14 @@ namespace MailingGroupNetTest.Features
         public async Task ExecuteShouldReturnSuccessAndClaims()
         {
             //Arrange
-            Mock<UserManager<IdentityUser>> userManagerMoq = UserManagerMoq.Get();
-            IdentityUser user = new IdentityUser("das");
-            var identityUsers = new List<IdentityUser>()
+            Mock<UserManager<AppUser>> userManagerMoq = UserManagerMoq.Get();
+            AppUser user = new AppUser("das");
+            var AppUsers = new List<AppUser>()
             {
                 user
             }.AsQueryable().BuildMock();
-            userManagerMoq.SetupGet(x => x.Users).Returns(identityUsers.Object);
-            userManagerMoq.Setup(x => x.CheckPasswordAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
+            userManagerMoq.SetupGet(x => x.Users).Returns(AppUsers.Object);
+            userManagerMoq.Setup(x => x.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
                 .ReturnsAsync(true);
             userManagerMoq.Setup(x => x.GetClaimsAsync(user)).ReturnsAsync(new List<Claim>()
             {
@@ -89,7 +90,7 @@ namespace MailingGroupNetTest.Features
             //Assert
             result.IsSuccess.Should().BeTrue();
             result.Message.Should().BeNullOrEmpty();
-            userManagerMoq.Verify(x => x.CheckPasswordAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()), Times.Once);
+            userManagerMoq.Verify(x => x.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>()), Times.Once);
             userManagerMoq.Verify(x => x.GetClaimsAsync(user), Times.Once);
         }
 

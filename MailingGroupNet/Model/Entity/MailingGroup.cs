@@ -8,7 +8,7 @@ namespace Model.Entity
         public string Name { get; set; }
         public List<Email> Emails { get; set; }
 
-        public IdentityUser User { get; set; }
+        public AppUser User { get; set; }
         public string UserId { get; set; }
     }
 }

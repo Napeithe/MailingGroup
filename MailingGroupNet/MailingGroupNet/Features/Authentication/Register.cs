@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Model.Dto;
+using Model.Entity;
 
 namespace MailingGroupNet.Features.Authentication
 {
@@ -20,9 +21,9 @@ namespace MailingGroupNet.Features.Authentication
 
     public class RegisterHandler : IRequestHandler<RegisterModel, ApiResult>
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
 
-        public RegisterHandler(UserManager<IdentityUser> userManager)
+        public RegisterHandler(UserManager<AppUser> userManager)
         {
             _userManager = userManager;
         }
@@ -31,17 +32,17 @@ namespace MailingGroupNet.Features.Authentication
         {
             if (!request.Password.Equals(request.RePassword))
             {
-                return ApiResult.Failed("The passwords are not equal");
+                return ApiResult.Failed("The passwords are not equal", 400);
             }
 
-            IdentityUser identityUser = new IdentityUser(request.UserName);
+            AppUser identityUser = new AppUser(request.UserName);
             identityUser.Email = request.Email;
 
             IdentityResult identityResult = await _userManager.CreateAsync(identityUser, request.Password);
 
             if (!identityResult.Succeeded)
             {
-                return ApiResult.Failed(identityResult.Errors.FirstOrDefault()?.Description ?? "Invalid login");
+                return ApiResult.Failed(identityResult.Errors.FirstOrDefault()?.Description ?? "Invalid register", 400);
             }
 
             return ApiResult.Success();

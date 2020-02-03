@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Model.Database;
+using Model.Entity;
 
 namespace MailingGroupNet
 {
@@ -59,7 +60,7 @@ namespace MailingGroupNet
                     options.UseNpgsql(connectionString, x => x.MigrationsAssembly(nameof(MailingGroupContext)));
                 });
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<MailingGroupContext>()
                 .AddDefaultTokenProviders();
 
