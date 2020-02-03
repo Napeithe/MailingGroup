@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MailingGroupNet.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using Model.Entity;
 
 namespace MailingGroupNet.Features.MailingGroup.Create
 {
-    public class Command : MailingGroupDto, IRequest<ApiResult<MailingGroupDto>>
+    public class Command : MailingGroupDto, IRequest<ApiResult<MailingGroupDto>>, IUserRequest
     {
         public string UserId { get; set; }   
     }

@@ -93,6 +93,7 @@ namespace MailingGroupNet
             {
                 options.SwaggerDoc("v1", new OpenApiInfo() { Title = "MailingGroup API", Version = "v1" });
                 options.DocInclusionPredicate((docName, description) => true);
+                options.CustomSchemaIds(c=>c.FullName);
 
                 // Define the BearerAuth scheme that's in use
                 options.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme()
@@ -131,6 +132,8 @@ namespace MailingGroupNet
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint(Configuration["App:ServerRootAddress"] + "swagger/v1/swagger.json", "MailingGroup API V1");
+                options.IndexStream = () => Assembly.GetExecutingAssembly()
+                    .GetManifestResourceStream("MailingGroupNet.wwwroot.swagger.ui.index.html");
             });
         }
     }

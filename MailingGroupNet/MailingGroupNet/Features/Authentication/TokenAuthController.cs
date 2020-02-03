@@ -6,15 +6,16 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using MailingGroupNet.Authentication;
-using MailingGroupNet.Features.Authentication;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Dto;
 
-namespace MailingGroupNet.Controllers
+namespace MailingGroupNet.Features.Authentication
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
+    [AllowAnonymous]
     public class TokenAuthController : ControllerBase
     {
         private readonly TokenAuthConfiguration _configuration;

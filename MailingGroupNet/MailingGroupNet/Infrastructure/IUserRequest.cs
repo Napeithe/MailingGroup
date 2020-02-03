@@ -10,13 +10,15 @@ namespace MailingGroupNet.Infrastructure
 
     public static class UserIdInjectorExtension
     {
-        public static void InjectUserId(this IUserRequest request, ClaimsIdentity identity)
+        public static IUserRequest InjectUserId(this IUserRequest request, ClaimsPrincipal identity)
         {
             Claim idClaim = identity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
             if (idClaim != null)
             {
                 request.UserId = idClaim.Value;
             }
+
+            return request;
         }
     }
 }
