@@ -9,6 +9,16 @@ services:
     image: dpage/pgadmin4:latest
     networks: 
       - default
+  portainer:
+    image: portainer/portainer:latest
+    ports:
+    - "9001:9000"
+    - "8001:8000"
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - portainervolume:/data
+volumes:
+  portainervolume:
 networks:
   default:
     driver: bridge

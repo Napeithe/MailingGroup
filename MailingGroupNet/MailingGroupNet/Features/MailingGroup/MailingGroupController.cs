@@ -73,12 +73,12 @@ namespace MailingGroupNet.Features.MailingGroup
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResult<MailingGroupDto>>> Create([FromBody]Create.Command cmd, CancellationToken token)
+        public async Task<ActionResult<ApiResult<MailingGroupItemListDto>>> Create([FromBody]Create.Command cmd, CancellationToken token)
         {
 
             cmd.InjectUserId(User);
 
-            ApiResult<MailingGroupDto> result = await _mediator.Send(cmd, token);
+            ApiResult<MailingGroupItemListDto> result = await _mediator.Send(cmd, token);
 
             if (!result.IsSuccess)
             {

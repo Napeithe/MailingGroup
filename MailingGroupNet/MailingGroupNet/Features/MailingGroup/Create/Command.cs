@@ -12,14 +12,14 @@ using Model.Entity;
 
 namespace MailingGroupNet.Features.MailingGroup.Create
 {
-    public class Command : IRequest<ApiResult<MailingGroupDto>>, IUserRequest
+    public class Command : IRequest<ApiResult<MailingGroupItemListDto>>, IUserRequest
     {
         [Required]
         public string Name { get; set; }
         public string UserId { get; set; }   
     }
 
-    public class Handler : IRequestHandler<Command, ApiResult<MailingGroupDto>>
+    public class Handler : IRequestHandler<Command, ApiResult<MailingGroupItemListDto>>
     {
         private readonly MailingGroupContext _context;
 
@@ -28,19 +28,19 @@ namespace MailingGroupNet.Features.MailingGroup.Create
             _context = context;
         }
 
-        public async Task<ApiResult<MailingGroupDto>> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<ApiResult<MailingGroupItemListDto>> Handle(Command request, CancellationToken cancellationToken)
         {
             AppUser user = await _context.Users.FirstOrDefaultAsync(x=>x.Id == request.UserId, cancellationToken);
 
             if (user is null)
             {
-                return ApiResult<MailingGroupDto>.Failed("User not found", 404);
+                return ApiResult<MailingGroupItemListDto>.Failed("User not found", 404);
             }
 
             string newName = request.Name.Trim();
             if (string.IsNullOrEmpty(newName))
             {
-                return ApiResult<MailingGroupDto>.Failed("Name is required", 400);
+                return ApiResult<MailingGroupItemListDto>.Failed("Name is required", 400);
             }
             
             bool isExist = await _context.MailingGroups
@@ -50,7 +50,7 @@ namespace MailingGroupNet.Features.MailingGroup.Create
 
             if (isExist)
             {
-                return ApiResult<MailingGroupDto>.Failed("This mailing group is already exists", 401);
+                return ApiResult<MailingGroupItemListDto>.Failed("This mailing group is already exists", 409);
             }
 
             Model.Entity.MailingGroup newEntity = new Model.Entity.MailingGroup
@@ -62,7 +62,7 @@ namespace MailingGroupNet.Features.MailingGroup.Create
 
             await _context.AddAsync(newEntity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-            return ApiResult<MailingGroupDto>.Success(new MailingGroupDto(newEntity.Id, newEntity.Name));
+            return ApiResult<MailingGroupItemListDto>.Success(new MailingGroupItemListDto(newEntity));
         }
     }
 }
