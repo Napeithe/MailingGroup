@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Table, Modal } from 'antd'
-import { removeMailingGroup, getMailingGroupDetail } from '../../Services/mailGroupService'
+import { Card, Table, Modal, Divider, Button } from 'antd'
+import { getMailingGroupDetail } from '../../Services/mailGroupService'
 import { ExtraButtons } from '../../Components/ExtraButton'
 import AddNewEmailForGroupModal from './AddNewEmailForGroupModal'
 import { useParams } from 'react-router-dom'
 import { createEmailInGroup, removeEmails } from '../../Services/emailService'
+import Text from 'antd/lib/typography/Text'
 
 const MailingGroupDetailPage = props => {
   const { id } = useParams()
@@ -47,6 +48,19 @@ const MailingGroupDetailPage = props => {
       title: 'Email',
       dataIndex: 'name',
       key: 'name'
+    },
+    {
+      title: '',
+      key: 'action',
+      width: '15%',
+      // eslint-disable-next-line react/display-name
+      render: (text, record) => (
+        <span>
+          <Button type='link'>Edit</Button>
+          <Divider type="vertical" />
+          <Button type='link' onClick={_ => onRemoveItemClicked(record)}><Text type='danger'>Delete</Text></Button>
+        </span>
+      )
     }
   ]
 
@@ -59,6 +73,20 @@ const MailingGroupDetailPage = props => {
           .then(async () => {
             setSelectedEmails([])
             setRemoveButtonDisabled(true)
+            await fetchData(id)
+          })
+      },
+      onCancel () {}
+    })
+  }
+
+  const onRemoveItemClicked = (record) => {
+    confirm({
+      title: 'Do you want to delete these item?',
+      content: 'This operation is irreversible',
+      onOk () {
+        return removeEmails([record.id], id)
+          .then(async () => {
             await fetchData(id)
           })
       },
