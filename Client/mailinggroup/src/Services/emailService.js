@@ -9,6 +9,14 @@ export const createEmailInGroup = (data) => {
     })
 }
 
+export const updateEmailInGroup = (data) => {
+  return http
+    .put(endpoints.emails.update, data)
+    .then(response => {
+      return Promise.resolve(response.data)
+    })
+}
+
 export const removeEmails = (emails, groupId) => {
   const emailId = `${emails.join('&emailId=')}`
   return http

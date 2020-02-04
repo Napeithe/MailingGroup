@@ -4,8 +4,9 @@ import { getMailingGroupDetail } from '../../Services/mailGroupService'
 import { ExtraButtons } from '../../Components/ExtraButton'
 import AddNewEmailForGroupModal from './AddNewEmailForGroupModal'
 import { useParams } from 'react-router-dom'
-import { createEmailInGroup, removeEmails } from '../../Services/emailService'
+import { createEmailInGroup, removeEmails, updateEmailInGroup } from '../../Services/emailService'
 import Text from 'antd/lib/typography/Text'
+import EditComponentModal from '../../Components/EditComponentModal'
 
 const MailingGroupDetailPage = props => {
   const { id } = useParams()
@@ -14,9 +15,11 @@ const MailingGroupDetailPage = props => {
   const [groupName, setGroupName] = useState([])
   const [selectedEmails, setSelectedEmails] = useState([])
   const [addNewModal, setAddNewModal] = useState(false)
+  const [updateNameVisible, setUpdateNameVisible] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
   const [removeButtonDisabled, setRemoveButtonDisabled] = useState(true)
   const [addNewError, setAddNewError] = useState('')
+  const [updatedEmail, setUpdatedEmail] = useState({})
   let addNewModalFormRef = {}
 
   const { confirm } = Modal
@@ -56,13 +59,18 @@ const MailingGroupDetailPage = props => {
       // eslint-disable-next-line react/display-name
       render: (text, record) => (
         <span>
-          <Button type='link'>Edit</Button>
+          <Button type='link'
+            onClick={_ => {
+              setUpdatedEmail(record)
+              setUpdateNameVisible(true)
+            }}>Edit</Button>
           <Divider type="vertical" />
           <Button type='link' onClick={_ => onRemoveItemClicked(record)}><Text type='danger'>Delete</Text></Button>
         </span>
       )
     }
   ]
+
 
   const onRemoveClicked = () => {
     confirm({
@@ -124,6 +132,29 @@ const MailingGroupDetailPage = props => {
     addNewModalFormRef = formRef
   }
 
+  const updateName = () => {
+    const { form } = addNewModalFormRef.props
+    form.validateFields(async (err, values) => {
+      if (err) {
+        return
+      }
+
+      setConfirmLoading(true)
+      values.groupId = parseInt(id)
+      values.emailId = updatedEmail.id
+      updateEmailInGroup(values).then( async _ => {
+        setUpdateNameVisible(false)
+        setConfirmLoading(false)
+        setAddNewError('')
+        form.resetFields()
+        await fetchData(id)
+      }).catch(err => {
+        setAddNewError(err.response.data)
+        setConfirmLoading(false)
+      })
+    })
+  }
+
   return (
     <>
       <h1>Group name: {groupName}</h1>
@@ -139,6 +170,26 @@ const MailingGroupDetailPage = props => {
           confirmLoading={confirmLoading}
           onCancel={handleCancelForAddNewModal}
           errorMessage={addNewError}
+        />
+        <EditComponentModal
+          wrappedComponentRef={saveFormRef}
+          title="Update email"
+          visible={updateNameVisible}
+          onCancel={() => setUpdateNameVisible(false)}
+          onCreate={updateName}
+          confirmLoading={confirmLoading}
+          errorMessage={addNewError}
+          inputName="email"
+          labelName="Email"
+          defaultValue={updatedEmail.name}
+          rules={
+            [
+              {
+                type: 'email',
+                message: 'The input is not valid E-mail!'
+              },
+              { required: true, message: 'Please input email!' }]
+          }
         />
         <Table
           rowSelection={rowSelection}
