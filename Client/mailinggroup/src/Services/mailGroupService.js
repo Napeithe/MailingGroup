@@ -19,3 +19,12 @@ export const createMailingGroup = (data) => {
       return Promise.resolve(response.data)
     })
 }
+
+export const removeMailingGroup = (data) => {
+  const ids = `${data.join('&id=')}`
+  return http
+    .delete(`${endpoints.mailingGroup.delete}?id=${ids}`)
+    .then(response => {
+      return Promise.resolve(response.data)
+    })
+}

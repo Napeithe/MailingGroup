@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Table, Button } from 'antd'
-import { getAllMailingGroups, createMailingGroup } from '../../Services/mailGroupService'
+import { Card, Table, Button, Modal } from 'antd'
+import { getAllMailingGroups, createMailingGroup, removeMailingGroup } from '../../Services/mailGroupService'
 import AddNewMailingGroupItemModal from './AddNewModalForm'
 import style from './MailingGroup.scss'
 import { ExtraButtons } from '../../Components/ExtraButton'
 
 const MailingGroupPage = props => {
   const [mailingGroups, setMailingGroups] = useState([])
+  const [selectedMailingGroups, setSelectedMailingGroups] = useState([])
   const [addNewModal, setAddNewModal] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
   const [removeButtonDisabled, setRemoveButtonDisabled] = useState(true)
   const [addNewGroupError, setAddNewGroupError] = useState('')
   let addNewModalFormRef = {}
+
+  const { confirm } = Modal
 
   useEffect(() => {
     getAllMailingGroups().then(x => {
@@ -26,6 +29,7 @@ const MailingGroupPage = props => {
       } else {
         setRemoveButtonDisabled(true)
       }
+      setSelectedMailingGroups(selectedRows.map((x) => x.id))
     },
     getCheckboxProps: record => ({
       disabled: record.name === 'Disabled User', // Column configuration not to be checked
@@ -45,6 +49,22 @@ const MailingGroupPage = props => {
       key: 'numberOfEmails'
     }
   ]
+
+  const onRemoveClicked = () => {
+    confirm({
+      title: 'Do you want to delete these items?',
+      content: 'This operation is irreversible',
+      onOk () {
+        return removeMailingGroup(selectedMailingGroups)
+          .then(() => {
+            setSelectedMailingGroups([])
+            setRemoveButtonDisabled(true)
+          })
+      },
+      onCancel () {}
+    })
+  }
+
   const onGroupClicked = event => {
     console.log('row clice')
   }
@@ -83,7 +103,7 @@ const MailingGroupPage = props => {
     <>
       <Card title="Your mailing groups" extra={<ExtraButtons
         addNewCallback={() => setAddNewModal(true)}
-        removeButtonCallback={() => {}}
+        removeButtonCallback={onRemoveClicked}
         removeButtonDisabled={removeButtonDisabled}/>}>
         <AddNewMailingGroupItemModal
           wrappedComponentRef={saveFormRef}
