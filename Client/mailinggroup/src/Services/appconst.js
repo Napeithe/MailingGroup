@@ -11,5 +11,10 @@ export const endpoints = {
     create: '/api/MailingGroup',
     get: '/api/MailingGroup',
     delete: '/api/MailingGroup'
+  },
+  emails: {
+    update: '/api/Email',
+    create: '/api/Email',
+    delete: '/api/Email'
   }
 }

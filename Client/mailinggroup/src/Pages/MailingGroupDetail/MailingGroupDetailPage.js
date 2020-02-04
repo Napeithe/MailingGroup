@@ -1,25 +1,29 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Table, Modal } from 'antd'
-import { getAllMailingGroups, createMailingGroup, removeMailingGroup } from '../../Services/mailGroupService'
-import AddNewMailingGroupItemModal from './AddNewModalForm'
-import style from './MailingGroup.scss'
+import { removeMailingGroup, getMailingGroupDetail } from '../../Services/mailGroupService'
 import { ExtraButtons } from '../../Components/ExtraButton'
-import routes from '../../Routing/routes'
+import AddNewEmailForGroupModal from './AddNewEmailForGroupModal'
+import { useParams } from 'react-router-dom'
+import { createEmailInGroup } from '../../Services/emailService'
 
-const MailingGroupPage = props => {
-  const [mailingGroups, setMailingGroups] = useState([])
+const MailingGroupDetailPage = props => {
+  const { id } = useParams()
+
+  const [emails, setEmails] = useState([])
+  const [groupName, setGroupName] = useState([])
   const [selectedMailingGroups, setSelectedMailingGroups] = useState([])
   const [addNewModal, setAddNewModal] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
   const [removeButtonDisabled, setRemoveButtonDisabled] = useState(true)
-  const [addNewGroupError, setAddNewGroupError] = useState('')
+  const [addNewError, setAddNewError] = useState('')
   let addNewModalFormRef = {}
 
   const { confirm } = Modal
 
   useEffect(() => {
-    getAllMailingGroups().then(x => {
-      setMailingGroups(x.data)
+    getMailingGroupDetail(id).then(x => {
+      setEmails(x.data.emails)
+      setGroupName(x.data.name)
     })
   })
 
@@ -37,14 +41,9 @@ const MailingGroupPage = props => {
 
   const columns = [
     {
-      title: 'Name',
+      title: 'Email',
       dataIndex: 'name',
       key: 'name'
-    },
-    {
-      title: 'Number of emails',
-      dataIndex: 'numberOfEmails',
-      key: 'numberOfEmails'
     }
   ]
 
@@ -63,10 +62,6 @@ const MailingGroupPage = props => {
     })
   }
 
-  const onGroupClicked = event => {
-    props.history.push(`${routes.mailGroupDetail}/${event.id}`)
-  }
-
   const handleOkForAddNewModal = () => {
     const { form } = addNewModalFormRef.props
     form.validateFields(async (err, values) => {
@@ -75,15 +70,16 @@ const MailingGroupPage = props => {
       }
 
       setConfirmLoading(true)
-
-      createMailingGroup(values).then(response => {
-        setMailingGroups(oldMailingGroups => [...oldMailingGroups, response.data])
+      values.groupId = parseInt(id)
+      createEmailInGroup(values).then(response => {
+        setEmails(oldEmails => [...oldEmails, response.data])
         setAddNewModal(false)
         setConfirmLoading(false)
-        setAddNewGroupError('')
+        setAddNewError('')
         form.resetFields()
       }).catch(err => {
-        setAddNewGroupError(err.response.data)
+        debugger
+        setAddNewError(err.response.data)
         setConfirmLoading(false)
       })
     })
@@ -99,29 +95,29 @@ const MailingGroupPage = props => {
 
   return (
     <>
-      <Card title="Your mailing groups" extra={<ExtraButtons
+      <h1>Group name: {groupName}</h1>
+      <Card title="List of emails in group" extra={<ExtraButtons
         addNewCallback={() => setAddNewModal(true)}
         removeButtonCallback={onRemoveClicked}
         removeButtonDisabled={removeButtonDisabled}/>}>
-        <AddNewMailingGroupItemModal
+        <AddNewEmailForGroupModal
           wrappedComponentRef={saveFormRef}
           title="Title"
           visible={addNewModal}
           onCreate={handleOkForAddNewModal}
           confirmLoading={confirmLoading}
           onCancel={handleCancelForAddNewModal}
-          errorMessage={addNewGroupError}
+          errorMessage={addNewError}
         />
         <Table
           rowSelection={rowSelection}
-          dataSource={mailingGroups}
+          dataSource={emails}
           columns={columns}
           rowKey='id'
-          onRow={(record) => ({ onClick: () => onGroupClicked(record) })}
         />
       </Card>
     </>
   )
 }
 
-export default MailingGroupPage
+export default MailingGroupDetailPage

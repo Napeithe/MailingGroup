@@ -3,6 +3,7 @@ import LoginPage from '../Pages/Login/LoginPage'
 import PublicLayout from '../shared/layout/PublicLayout'
 import MailingGroupPage from '../Pages/MailingGroup/MailingGroupPage'
 import AuthLayout from '../shared/layout/AuthLayout'
+import MailingGroupDetailPage from '../Pages/MailingGroupDetail/MailingGroupDetailPage'
 import RegisterPage from '../Pages/Register/RegisterPage'
 import RegisterSuccessPage from '../Pages/Register/RegisterSuccessPage'
 import { Route } from 'react-router-dom'
@@ -29,6 +30,13 @@ const mailingGroupPagesRouter = [
     component: RegisterSuccessPage,
     layout: PublicLayout,
     route: Route
+  },
+  {
+    exact: true,
+    path: `${routes.mailGroupDetail}/:id`,
+    component: MailingGroupDetailPage,
+    layout: AuthLayout,
+    route: PrivateRoute
   },
   {
     exact: false,

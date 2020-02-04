@@ -11,6 +11,16 @@ export const getAllMailingGroups = () => {
       console.log(err)
     })
 }
+export const getMailingGroupDetail = (id) => {
+  return http
+    .get(`${endpoints.mailingGroup.get}/${id}`)
+    .then(response => {
+      return Promise.resolve(response.data)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+}
 
 export const createMailingGroup = (data) => {
   return http
