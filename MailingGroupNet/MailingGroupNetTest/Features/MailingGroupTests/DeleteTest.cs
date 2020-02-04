@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Model.Database;
@@ -29,7 +30,7 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
 
             Command query = new Command()
             {
-                Id = secondMailingGroup.Id,
+                Id = new List<int>{secondMailingGroup.Id},
                 UserId = firstMailingGroup.UserId
             };
             //Act
@@ -55,7 +56,7 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
                 .BuildAndSave();
             Command query = new Command()
             {
-                Id = 22,
+                Id = new List<int> { 22 },
                 UserId = firstMailingGroup.UserId
             };
             //Act
@@ -80,7 +81,7 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
                 .BuildAndSave();
             Command query = new Command()
             {
-                Id = 1,
+                Id = new List<int> { 1 },
                 UserId = firstMailingGroup.UserId
             };
             //Act

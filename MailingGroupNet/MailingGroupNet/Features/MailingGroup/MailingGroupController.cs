@@ -53,8 +53,8 @@ namespace MailingGroupNet.Features.MailingGroup
             return result;
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<ApiResult>> Delete([FromRoute] int id, CancellationToken token)
+        [HttpDelete("")]
+        public async Task<ActionResult<ApiResult>> Delete([FromQuery] List<int> id, CancellationToken token)
         {
             var cmd = new Delete.Command
             {

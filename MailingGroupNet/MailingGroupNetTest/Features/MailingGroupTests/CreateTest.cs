@@ -26,7 +26,7 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
                 Name = "test"
             };
             //Act
-            ApiResult<MailingGroupDto> result = await new Handler(mailingGroupContext).Handle(cmd, CancellationToken.None);
+            ApiResult<MailingGroupItemListDto> result = await new Handler(mailingGroupContext).Handle(cmd, CancellationToken.None);
             //Assert
             result.IsSuccess.Should().BeFalse();
             result.Message.Should().Be("User not found");
@@ -46,7 +46,7 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
                 Name = string.Empty
             };
             //Act
-            ApiResult<MailingGroupDto> result = await new Handler(mailingGroupContext).Handle(cmd, CancellationToken.None);
+            ApiResult<MailingGroupItemListDto> result = await new Handler(mailingGroupContext).Handle(cmd, CancellationToken.None);
             //Assert
             result.IsSuccess.Should().BeFalse();
             result.Message.Should().Be("Name is required");
@@ -69,7 +69,7 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
                 Name = mailingGroup.Name
             };
             //Act
-            ApiResult<MailingGroupDto> result = await new Handler(mailingGroupContext).Handle(cmd, CancellationToken.None);
+            ApiResult<MailingGroupItemListDto> result = await new Handler(mailingGroupContext).Handle(cmd, CancellationToken.None);
             //Assert
             result.IsSuccess.Should().BeFalse();
             result.Message.Should().Be("This mailing group is already exists");
@@ -89,7 +89,7 @@ namespace MailingGroupNetTest.Features.MailingGroupTests
                 Name = "New group"
             };
             //Act
-            ApiResult<MailingGroupDto> result = await new Handler(mailingGroupContext).Handle(cmd, CancellationToken.None);
+            ApiResult<MailingGroupItemListDto> result = await new Handler(mailingGroupContext).Handle(cmd, CancellationToken.None);
             //Assert
             result.IsSuccess.Should().BeTrue();
             result.Message.Should().BeNullOrEmpty();
