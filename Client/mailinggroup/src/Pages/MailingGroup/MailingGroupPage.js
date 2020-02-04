@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { Card, Table, Button } from 'antd'
 import { getAllMailingGroups, createMailingGroup } from '../../Services/mailGroupService'
 import AddNewMailingGroupItemModal from './AddNewModalForm'
+import style from './MailingGroup.scss'
+import { ExtraButtons } from '../../Components/ExtraButton'
 
 const MailingGroupPage = props => {
   const [mailingGroups, setMailingGroups] = useState([])
   const [addNewModal, setAddNewModal] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
+  const [removeButtonDisabled, setRemoveButtonDisabled] = useState(true)
   const [addNewGroupError, setAddNewGroupError] = useState('')
   let addNewModalFormRef = {}
 
@@ -18,11 +21,11 @@ const MailingGroupPage = props => {
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        'selectedRows: ',
-        selectedRows
-      )
+      if (selectedRowKeys.length > 0) {
+        setRemoveButtonDisabled(false)
+      } else {
+        setRemoveButtonDisabled(true)
+      }
     },
     getCheckboxProps: record => ({
       disabled: record.name === 'Disabled User', // Column configuration not to be checked
@@ -38,8 +41,8 @@ const MailingGroupPage = props => {
     },
     {
       title: 'Number of emails',
-      dataIndex: 'emailCount',
-      key: 'emailCount'
+      dataIndex: 'numberOfEmails',
+      key: 'numberOfEmails'
     }
   ]
   const onGroupClicked = event => {
@@ -78,7 +81,10 @@ const MailingGroupPage = props => {
 
   return (
     <>
-      <Card title="Your mailing groups" extra={<Button onClick={() => setAddNewModal(true)}>Add new</Button>}>
+      <Card title="Your mailing groups" extra={<ExtraButtons
+        addNewCallback={() => setAddNewModal(true)}
+        removeButtonCallback={() => {}}
+        removeButtonDisabled={removeButtonDisabled}/>}>
         <AddNewMailingGroupItemModal
           wrappedComponentRef={saveFormRef}
           title="Title"
