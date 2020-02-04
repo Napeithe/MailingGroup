@@ -8,3 +8,12 @@ export const createEmailInGroup = (data) => {
       return Promise.resolve(response.data)
     })
 }
+
+export const removeEmails = (emails, groupId) => {
+  const emailId = `${emails.join('&emailId=')}`
+  return http
+    .delete(`${endpoints.emails.delete}?groupId=${groupId}&emailId=${emailId}`)
+    .then(response => {
+      return Promise.resolve(response.data)
+    })
+}

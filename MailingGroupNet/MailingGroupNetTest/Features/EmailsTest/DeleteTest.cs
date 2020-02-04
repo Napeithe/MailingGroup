@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +23,8 @@ namespace MailingGroupNetTest.Features.EmailsTest
             Command cmd = new Command
             {
                 UserId = Guid.NewGuid().ToString(),
-                GroupId = 23
+                GroupId = 23,
+                EmailId = new List<int> { 43}
             };
             //Act
             ApiResult result = await new Handler(context).Handle(cmd, CancellationToken.None);
@@ -48,7 +50,7 @@ namespace MailingGroupNetTest.Features.EmailsTest
             {
                 UserId = mailingGroup.User.Id,
                 GroupId = mailingGroup.Id,
-                EmailId = mailingGroup.Emails.First().Id
+                EmailId = new List<int>{mailingGroup.Emails.First().Id}
             };
             //Act
             ApiResult result = await new Handler(context).Handle(cmd, CancellationToken.None);

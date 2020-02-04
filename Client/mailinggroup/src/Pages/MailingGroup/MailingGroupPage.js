@@ -17,11 +17,14 @@ const MailingGroupPage = props => {
 
   const { confirm } = Modal
 
+  const fetchData = async () => {
+    const result = await getAllMailingGroups()
+    setMailingGroups(result.data)
+  }
+
   useEffect(() => {
-    getAllMailingGroups().then(x => {
-      setMailingGroups(x.data)
-    })
-  })
+    fetchData()
+  }, [])
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -54,9 +57,10 @@ const MailingGroupPage = props => {
       content: 'This operation is irreversible',
       onOk () {
         return removeMailingGroup(selectedMailingGroups)
-          .then(() => {
+          .then(async () => {
             setSelectedMailingGroups([])
             setRemoveButtonDisabled(true)
+            await fetchData()
           })
       },
       onCancel () {}

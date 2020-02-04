@@ -4,14 +4,14 @@ import { removeMailingGroup, getMailingGroupDetail } from '../../Services/mailGr
 import { ExtraButtons } from '../../Components/ExtraButton'
 import AddNewEmailForGroupModal from './AddNewEmailForGroupModal'
 import { useParams } from 'react-router-dom'
-import { createEmailInGroup } from '../../Services/emailService'
+import { createEmailInGroup, removeEmails } from '../../Services/emailService'
 
 const MailingGroupDetailPage = props => {
   const { id } = useParams()
 
   const [emails, setEmails] = useState([])
   const [groupName, setGroupName] = useState([])
-  const [selectedMailingGroups, setSelectedMailingGroups] = useState([])
+  const [selectedEmails, setSelectedEmails] = useState([])
   const [addNewModal, setAddNewModal] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
   const [removeButtonDisabled, setRemoveButtonDisabled] = useState(true)
@@ -20,12 +20,15 @@ const MailingGroupDetailPage = props => {
 
   const { confirm } = Modal
 
+  const fetchData = async (id) => {
+    const result = await getMailingGroupDetail(id)
+    setEmails(result.data.emails)
+    setGroupName(result.data.name)
+  }
+
   useEffect(() => {
-    getMailingGroupDetail(id).then(x => {
-      setEmails(x.data.emails)
-      setGroupName(x.data.name)
-    })
-  })
+    fetchData(id)
+  }, [id])
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -35,7 +38,7 @@ const MailingGroupDetailPage = props => {
       } else {
         setRemoveButtonDisabled(true)
       }
-      setSelectedMailingGroups(selectedRowsIds)
+      setSelectedEmails(selectedRowsIds)
     }
   }
 
@@ -52,10 +55,11 @@ const MailingGroupDetailPage = props => {
       title: 'Do you want to delete these items?',
       content: 'This operation is irreversible',
       onOk () {
-        return removeMailingGroup(selectedMailingGroups)
-          .then(() => {
-            setSelectedMailingGroups([])
+        return removeEmails(selectedEmails, id)
+          .then(async () => {
+            setSelectedEmails([])
             setRemoveButtonDisabled(true)
+            await fetchData(id)
           })
       },
       onCancel () {}
@@ -78,7 +82,6 @@ const MailingGroupDetailPage = props => {
         setAddNewError('')
         form.resetFields()
       }).catch(err => {
-        debugger
         setAddNewError(err.response.data)
         setConfirmLoading(false)
       })

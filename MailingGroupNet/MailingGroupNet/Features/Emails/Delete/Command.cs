@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,10 +14,14 @@ namespace MailingGroupNet.Features.Emails.Delete
 {
     public class Command : IRequest<ApiResult>, IUserRequest
     {
+        public Command()
+        {
+            EmailId = new List<int>();
+        }
         [Required]
         public int GroupId { get; set; }
         [Required]
-        public int EmailId { get; set; }
+        public List<int> EmailId { get; set; }
         public string UserId { get; set; }
     }
 
@@ -31,18 +36,19 @@ namespace MailingGroupNet.Features.Emails.Delete
 
         public async Task<ApiResult> Handle(Command request, CancellationToken cancellationToken)
         {
-            Email email = await _context.Emails
+            List<Email> email = await _context.Emails
                 .Include(x=>x.MailingGroup)
-                .Where(x=>x.Id == request.EmailId)
+                .Where(x=>request.EmailId.Contains(x.Id))
                 .Where(x=>x.MailingGroup.UserId == request.UserId)
-                .FirstOrDefaultAsync(cancellationToken);
+                .Where(x=>x.MailingGroup.Id == request.GroupId)
+                .ToListAsync(cancellationToken);
 
-            if (email is null)
+            if (email.Count == 0 && request.EmailId.Count == 1)
             {
                 return ApiResult<EmailDto>.Failed("Email is not exists", 404);
             }
 
-            _context.Remove(email);
+            _context.RemoveRange(email);
             await _context.SaveChangesAsync(cancellationToken);
 
             return ApiResult.Success();

@@ -13,6 +13,10 @@ namespace MailingGroupNet.Features.MailingGroup.Delete
 {
     public class Command : IRequest<ApiResult>, IUserRequest
     {
+        public Command()
+        {
+            Id = new List<int>();
+        }
         [Required]
         public List<int> Id { get; set; }
         public string UserId { get; set; }
