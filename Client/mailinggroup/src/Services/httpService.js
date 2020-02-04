@@ -1,6 +1,7 @@
 import { serverUrl } from './appconst'
 import { Modal } from 'antd'
 import axios from 'axios'
+import { logout, getToken } from './accountService'
 
 const qs = require('qs')
 
@@ -16,8 +17,10 @@ const http = axios.create({
 
 http.interceptors.request.use(
   function (config) {
-    // TODO add token
-
+    const token = getToken()
+    if (token) {
+      config.headers.common.Authorization = 'Bearer ' + token
+    }
     return config
   },
   function (error) {
@@ -30,22 +33,31 @@ http.interceptors.response.use(
     return response
   },
   error => {
-    if (!!error.response && !!error.response.data.error && !!error.response.data.error.message && error.response.data.error.details) {
+    if (
+      !!error.response &&
+      !!error.response.data.error &&
+      !!error.response.data.error.message &&
+      error.response.data.error.details
+    ) {
       Modal.error({
         title: error.response.data.error.message,
         content: error.response.data.error.details
       })
-    } else if (!!error.response && !!error.response.data.error && !!error.response.data.error.message) {
+    } else if (
+      !!error.response &&
+      !!error.response.data.error &&
+      !!error.response.data.error.message
+    ) {
       Modal.error({
         title: 'Login failed',
         content: error.response.data.error.message
       })
     } else if (!error.response) {
       Modal.error({ content: 'Unknown Error' })
+    } else if (error.response.status === 401) {
+      logout()
+      window.location.reload()
     }
-
-    setTimeout(() => {}, 1000)
-
     return Promise.reject(error)
   }
 )

@@ -1,29 +1,34 @@
-import React from 'react'
-import { Card, Table } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { Card, Table, Button } from 'antd'
+import { getAllMailingGroups, createMailingGroup } from '../../Services/mailGroupService'
+import AddNewMailingGroupItemModal from './AddNewModalForm'
 
 const MailingGroupPage = props => {
+  const [mailingGroups, setMailingGroups] = useState([])
+  const [addNewModal, setAddNewModal] = useState(false)
+  const [confirmLoading, setConfirmLoading] = useState(false)
+  const [addNewGroupError, setAddNewGroupError] = useState('')
+  let addNewModalFormRef = {}
+
+  useEffect(() => {
+    getAllMailingGroups().then(x => {
+      setMailingGroups(x.data)
+    })
+  })
+
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
+      console.log(
+        `selectedRowKeys: ${selectedRowKeys}`,
+        'selectedRows: ',
+        selectedRows
+      )
     },
     getCheckboxProps: record => ({
       disabled: record.name === 'Disabled User', // Column configuration not to be checked
       name: record.name
     })
   }
-
-  const dataSource = [
-    {
-      key: '1',
-      name: 'Mike',
-      emailCount: 32
-    },
-    {
-      key: '2',
-      name: 'John',
-      emailCount: 42
-    }
-  ]
 
   const columns = [
     {
@@ -40,11 +45,59 @@ const MailingGroupPage = props => {
   const onGroupClicked = event => {
     console.log('row clice')
   }
-  return (<>
-    <Card title='Your mailing groups'>
-      <Table rowSelection={rowSelection} dataSource={dataSource} columns={columns} onRowClick={onGroupClicked} />
-    </Card>
-  </>)
+
+  const handleOkForAddNewModal = () => {
+    const { form } = addNewModalFormRef.props
+    form.validateFields(async (err, values) => {
+      if (err) {
+        return
+      }
+
+      setConfirmLoading(true)
+
+      createMailingGroup(values).then(response => {
+        setMailingGroups(oldMailingGroups => [...oldMailingGroups, response.data])
+        setAddNewModal(false)
+        setConfirmLoading(false)
+        setAddNewGroupError('')
+        form.resetFields()
+      }).catch(err => {
+        setAddNewGroupError(err.response.data)
+        setConfirmLoading(false)
+      })
+    })
+  }
+
+  const handleCancelForAddNewModal = () => {
+    setAddNewModal(false)
+  }
+
+  const saveFormRef = formRef => {
+    addNewModalFormRef = formRef
+  }
+
+  return (
+    <>
+      <Card title="Your mailing groups" extra={<Button onClick={() => setAddNewModal(true)}>Add new</Button>}>
+        <AddNewMailingGroupItemModal
+          wrappedComponentRef={saveFormRef}
+          title="Title"
+          visible={addNewModal}
+          onCreate={handleOkForAddNewModal}
+          confirmLoading={confirmLoading}
+          onCancel={handleCancelForAddNewModal}
+          errorMessage={addNewGroupError}
+        />
+        <Table
+          rowSelection={rowSelection}
+          dataSource={mailingGroups}
+          columns={columns}
+          rowKey='id'
+          onRow={(record) => ({ onClick: () => onGroupClicked(record) })}
+        />
+      </Card>
+    </>
+  )
 }
 
 export default MailingGroupPage
