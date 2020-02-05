@@ -34,7 +34,7 @@ namespace MailingGroupNet.Features.Authentication
 
             if (!result.IsSuccess)
             {
-                return StatusCode(401);
+                return StatusCode(result.StatusCode);
             }
 
             var accessToken = CreateAccessToken(CreateJwtClaims(result.Data));

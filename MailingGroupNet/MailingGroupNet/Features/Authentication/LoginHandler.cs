@@ -33,18 +33,19 @@ namespace MailingGroupNet.Features.Authentication
 
             if (user is null)
             {
-                return ApiResult<List<Claim>>.Failed("Username or password is invalid", 401);
+                return ApiResult<List<Claim>>.Failed("Username or password is invalid", 400);
             }
 
             var isValidPassword = await _userManager.CheckPasswordAsync(user, request.Password);
 
             if (!isValidPassword)
             {
-                return ApiResult<List<Claim>>.Failed("Username or password is invalid", 401);
+                return ApiResult<List<Claim>>.Failed("Username or password is invalid", 400);
             }
 
             IList<Claim> claims = await _userManager.GetClaimsAsync(user);
             claims.Add(new Claim(ClaimTypes.Name, user.UserName));
+            claims.Add(new Claim("UserName", user.UserName));
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
             return ApiResult<List<Claim>>.Success(claims.ToList());

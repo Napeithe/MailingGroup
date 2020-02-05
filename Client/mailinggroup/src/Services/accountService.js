@@ -1,10 +1,16 @@
 import { endpoints } from './appconst'
 import http from './httpService'
-
+import jwt_decode from 'jwt-decode'
 const itemKey = 'User'
 
 export const registerUser = (userData) => {
   return http.post(endpoints.account.register, userData)
+}
+
+export const getDecodedToken = () => {
+  const token = getToken()
+  const decodedToken = jwt_decode(token)
+  return decodedToken
 }
 
 export const loginService = (loginForm) => {
@@ -14,7 +20,7 @@ export const loginService = (loginForm) => {
       return Promise.resolve()
     })
     .catch(err => {
-      if (err.response.status === 401) {
+      if (err.response.status === 400) {
         return Promise.reject(new Error('Incorect username or password'))
       } else {
         return Promise.reject(new Error(`Cannot sign in right now. Status code: ${err.response.status}`))

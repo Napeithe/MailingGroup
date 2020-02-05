@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Row, Layout, Dropdown, Menu, Icon, Button } from 'antd'
-import { logout } from '../../Services/accountService'
+import { logout, getDecodedToken } from '../../Services/accountService'
 import PropTypes from 'prop-types'
 import routes from '../../Routing/routes'
 
@@ -10,6 +10,13 @@ const AuthLayout = (props) => {
   AuthLayout.propTypes = {
     history: PropTypes.object
   }
+
+  const [userName, setUserName] = useState('')
+
+  useEffect(() => {
+    const decodedToken = getDecodedToken()
+    setUserName(decodedToken.UserName)
+  }, [])
 
   const onLogout = () => {
     logout()
@@ -43,7 +50,7 @@ const AuthLayout = (props) => {
             trigger={['click']}
           >
             <Button ghost className="primary-btn">
-                User@gmail.com <Icon type="down" />
+              {userName} <Icon type="down" />
             </Button>
           </Dropdown>
         </Row>
