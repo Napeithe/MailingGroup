@@ -18,6 +18,7 @@ const MailingGroupPage = props => {
   const [updatedGroup, setUpdatedGroup] = useState({})
   const [updateNameVisible, setUpdateNameVisible] = useState(false)
   let addNewModalFormRef = {}
+  let updateFormRef = {}
 
   const { confirm } = Modal
 
@@ -134,7 +135,7 @@ const MailingGroupPage = props => {
   }
 
   const updateName = () => {
-    const { form } = addNewModalFormRef.props
+    const { form } = updateFormRef.props
     form.validateFields(async (err, values) => {
       if (err) {
         return
@@ -162,6 +163,9 @@ const MailingGroupPage = props => {
   const saveFormRef = formRef => {
     addNewModalFormRef = formRef
   }
+  const saveUpdateFormRef = formRef => {
+    updateFormRef = formRef
+  }
 
   return (
     <>
@@ -179,7 +183,7 @@ const MailingGroupPage = props => {
           errorMessage={addNewGroupError}
         />
         <EditComponentModal
-          wrappedComponentRef={saveFormRef}
+          wrappedComponentRef={saveUpdateFormRef}
           title="Update group"
           visible={updateNameVisible}
           onCancel={() => setUpdateNameVisible(false)}

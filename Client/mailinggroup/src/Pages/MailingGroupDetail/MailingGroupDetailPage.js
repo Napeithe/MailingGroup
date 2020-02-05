@@ -22,6 +22,7 @@ const MailingGroupDetailPage = props => {
   const [addNewError, setAddNewError] = useState('')
   const [updatedEmail, setUpdatedEmail] = useState({})
   let addNewModalFormRef = {}
+  let updateNameFormRef = {}
 
   const { confirm } = Modal
 
@@ -133,9 +134,12 @@ const MailingGroupDetailPage = props => {
   const saveFormRef = formRef => {
     addNewModalFormRef = formRef
   }
+  const saveUpdateNameFormRef = formRef => {
+    updateNameFormRef = formRef
+  }
 
   const updateName = () => {
-    const { form } = addNewModalFormRef.props
+    const { form } = updateNameFormRef.props
     form.validateFields(async (err, values) => {
       if (err) {
         return
@@ -159,7 +163,7 @@ const MailingGroupDetailPage = props => {
 
   return (
     <>
-      <Title level={2}><Button type='link' size='large' style={{fontSize: 26}}onClick={()=>props.history.goBack()}> <Icon type="arrow-left" /></Button>Group name: {groupName}</Title>
+      <Title level={2}><Button type='link' size='large' style={{ fontSize: 26 }}onClick={() => props.history.goBack()}> <Icon type="arrow-left" /></Button>Group name: {groupName}</Title>
       <Card title="List of emails in group" extra={<ExtraButtons
         addNewCallback={() => setAddNewModal(true)}
         removeButtonCallback={onRemoveClicked}
@@ -174,7 +178,7 @@ const MailingGroupDetailPage = props => {
           errorMessage={addNewError}
         />
         <EditComponentModal
-          wrappedComponentRef={saveFormRef}
+          wrappedComponentRef={saveUpdateNameFormRef}
           title="Update email"
           visible={updateNameVisible}
           onCancel={() => setUpdateNameVisible(false)}
