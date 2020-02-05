@@ -30,6 +30,14 @@ export const createMailingGroup = (data) => {
     })
 }
 
+export const updateMailingGroupName = (data) => {
+  return http
+    .put(endpoints.mailingGroup.update, data)
+    .then(response => {
+      return Promise.resolve(response.data)
+    })
+}
+
 export const removeMailingGroup = (data) => {
   const ids = `${data.join('&id=')}`
   return http

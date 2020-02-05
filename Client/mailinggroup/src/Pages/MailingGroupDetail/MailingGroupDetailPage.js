@@ -71,7 +71,6 @@ const MailingGroupDetailPage = props => {
     }
   ]
 
-
   const onRemoveClicked = () => {
     confirm({
       title: 'Do you want to delete these items?',
@@ -142,7 +141,7 @@ const MailingGroupDetailPage = props => {
       setConfirmLoading(true)
       values.groupId = parseInt(id)
       values.emailId = updatedEmail.id
-      updateEmailInGroup(values).then( async _ => {
+      updateEmailInGroup(values).then(async _ => {
         setUpdateNameVisible(false)
         setConfirmLoading(false)
         setAddNewError('')
