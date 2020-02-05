@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Card, Form, Input, Icon, Button } from 'antd'
+import { Card, Form, Input, Icon, Button, Typography } from 'antd'
 import style from './RegisterPage.scss'
 import { formShape } from 'rc-form'
 import { registerUser } from '../../Services/accountService'
@@ -13,6 +13,8 @@ const RegisterPage = props => {
   }
 
   const [rePasswordDirty, setRePasswordDirty] = useState(false)
+  const [registerErrorMessage, setRegisterErrorMessage] = useState('')
+  const [showErrorMessage, setShowErrorMessage] = useState(false)
 
   const compareToFirstPassword = (rule, value, callback) => {
     const { form } = props
@@ -30,6 +32,9 @@ const RegisterPage = props => {
         registerUser(values)
           .then(() => {
             props.history.push(routes.registerSuccess)
+          }).catch(err => {
+            setShowErrorMessage(true)
+            setRegisterErrorMessage(err.response.data.message)
           })
       }
     })
@@ -46,6 +51,19 @@ const RegisterPage = props => {
       form.validateFields(['repassword'], { force: true })
     }
     callback()
+  }
+
+  const ErrorMessageBlock = () => {
+    const { Text } = Typography
+    const block = (
+      <div className='error-message-block'>
+        <Text type='danger'>{registerErrorMessage}</Text>
+      </div>
+    )
+    if (showErrorMessage) {
+      return block
+    }
+    return null
   }
 
   const { getFieldDecorator } = props.form
@@ -132,6 +150,7 @@ const RegisterPage = props => {
               />
             )}
           </Form.Item>
+          <ErrorMessageBlock />
 
           <Button htmlType="submit" className="login-form-button">
             Register

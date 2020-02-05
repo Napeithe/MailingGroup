@@ -13,7 +13,7 @@ const LoginPage = props => {
   }
   const { getFieldDecorator } = props.form
 
-  const [loginErrorMessage, setLoginErrorMessage] = useState('testmessage')
+  const [loginErrorMessage, setLoginErrorMessage] = useState('')
   const [showErrorMessage, setShowErrorMessage] = useState(false)
 
   const ErrorMessageBlock = () => {
