@@ -22,8 +22,7 @@ const AuthLayout = (props) => {
       <Header
         style={{
           zIndex: 1,
-          width: '100%',
-          backgroundColor: '#672A2F'
+          width: '100%'
         }}
       >
         <Row

@@ -48,12 +48,15 @@ const MailingGroupPage = props => {
       dataIndex: 'name',
       key: 'name',
       // eslint-disable-next-line react/display-name
-      render: (text, record) => (<Button type='link' onClick={() => onGroupClicked(record)}>{text}</Button>)
+      render: (text, record) => (<Button type='link' onClick={() => onGroupClicked(record)}>{text}</Button>),
+      sorter: (a, b) => a.name.length - b.name.length,
+      defaultSortOrder: 'ascend'
     },
     {
       title: 'Number of emails',
       dataIndex: 'numberOfEmails',
-      key: 'numberOfEmails'
+      key: 'numberOfEmails',
+      sorter: (a, b) => a.numberOfEmails - b.numberOfEmails
     },
     {
       title: '',

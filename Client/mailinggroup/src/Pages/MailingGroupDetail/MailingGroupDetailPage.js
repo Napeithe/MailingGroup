@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Table, Modal, Divider, Button } from 'antd'
+import { Card, Table, Modal, Divider, Button, Icon } from 'antd'
 import { getMailingGroupDetail } from '../../Services/mailGroupService'
 import { ExtraButtons } from '../../Components/ExtraButton'
 import AddNewEmailForGroupModal from './AddNewEmailForGroupModal'
@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom'
 import { createEmailInGroup, removeEmails, updateEmailInGroup } from '../../Services/emailService'
 import Text from 'antd/lib/typography/Text'
 import EditComponentModal from '../../Components/EditComponentModal'
+import Title from 'antd/lib/typography/Title'
 
 const MailingGroupDetailPage = props => {
   const { id } = useParams()
@@ -50,7 +51,9 @@ const MailingGroupDetailPage = props => {
     {
       title: 'Email',
       dataIndex: 'name',
-      key: 'name'
+      key: 'name',
+      sorter: (a, b) => a.name.length - b.name.length,
+      defaultSortOrder: 'ascend'
     },
     {
       title: '',
@@ -156,7 +159,7 @@ const MailingGroupDetailPage = props => {
 
   return (
     <>
-      <h1>Group name: {groupName}</h1>
+      <Title level={2}><Button type='link' size='large' style={{fontSize: 26}}onClick={()=>props.history.goBack()}> <Icon type="arrow-left" /></Button>Group name: {groupName}</Title>
       <Card title="List of emails in group" extra={<ExtraButtons
         addNewCallback={() => setAddNewModal(true)}
         removeButtonCallback={onRemoveClicked}

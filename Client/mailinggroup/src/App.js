@@ -3,6 +3,7 @@ import { createBrowserHistory } from 'history'
 import PropTypes from 'prop-types'
 import MailingGroupRouter from './Routing/MailingGroupRouter'
 import MailingGroupPagesRouter from './Routing/PagesRouter'
+import './App.css'
 
 const App = () => {
   App.propTypes = {
